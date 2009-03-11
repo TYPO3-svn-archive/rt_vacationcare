@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>module</type>
+		<description>Language labels for module &quot;web_txrtvacationcareM4&quot;</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="title">Caretakers</label>
+			<label index="function1">Function #1</label>
+			<label index="function2">Function #2</label>
+			<label index="function3">Function #3</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="title">Betreuer</label>
+			<label index="createCaretaker"> Betreuer anlegen</label>
+			<label index="titleSingular">Betreuer</label>
+			<label index="nameFirstname">Name, Vorname</label>
+			<label index="altR">R</label>
+			<label index="street">Strasse</label>
+			<label index="zipCity">PLZ, Ort</label>
+			<label index="birthdate">Geburtstag</label>
+			<label index="phone">Telefon</label>
+			<label index="feAccount">BB-Zugang</label>
+		</languageKey>
+	</data>
+</T3locallang>
