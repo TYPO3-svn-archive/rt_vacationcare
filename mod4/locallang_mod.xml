@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<T3locallang>
+	<meta type="array">
+		<type>module</type>
+		<description>Language labels for module &quot;web_txrtvacationcareM4&quot; - header, description</description>
+	</meta>
+	<data type="array">
+		<languageKey index="default" type="array">
+			<label index="mlang_tabs_tab">Caretakers</label>
+			<label index="mlang_labels_tabdescr">Manage caretakers</label>
+			<label index="mlang_labels_tablabel">Manage caretakers</label>
+		</languageKey>
+		<languageKey index="de" type="array">
+			<label index="mlang_tabs_tab">Betreuer</label>
+			<label index="mlang_labels_tabdescr">Verwalte Betreuer</label>
+			<label index="mlang_labels_tablabel">Verwalte Betreuer</label>
+		</languageKey>
+	</data>
+</T3locallang>

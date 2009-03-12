@@ -1,0 +1,38 @@
+/* Caution! Ensure accessibility in print and other media types... */
+@media projection, screen { /* Use class for showing/hiding tab content, so that visibility can be better controlled in different media types... */
+    .ui-tabs-hide {
+        display: none;
+    }
+    
+    ul#tabs1 {
+    	margin: 0 0 50px 0;
+    }
+    
+    ul#tabs1 li {
+    	float: left;
+		margin: 4px 6px;
+		background: #FF6600;
+    }
+    
+    ul#tabs1 li a {
+    	display: block;
+    	padding: 10px;
+    	color: #ffffff;
+    }
+    
+    ul#tabs1 li a:hover, ul#tabs li.ui-tabs-selected a {
+    	color: #000000;
+    	background: #ffffff;
+    	border: 1px solid #FF6600;
+    }
+    
+    
+}
+
+/* Hide useless elements in print layouts... */
+@media print {
+    .ui-tabs-nav {
+        display: none;
+    }
+}
+

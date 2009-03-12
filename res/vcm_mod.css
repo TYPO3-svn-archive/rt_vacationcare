@@ -1,0 +1,26 @@
+tr:hover {
+	background-color: #FFCC99;
+}
+body#ext-rt-vacationcare-mod2-index-php {
+	background: url(../../../../typo3conf/ext/rt_vacationcare/res/spirale.png) no-repeat bottom left;
+}
+body#ext-rt-vacationcare-mod3-index-php {
+	background: url(../../../../typo3conf/ext/rt_vacationcare/res/spirale.png) no-repeat bottom left;
+}
+table {
+	border-collapse: collapse;
+}
+
+td {
+	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	padding: 0 20px 0 10px;
+	vertical-align: top;
+	width: auto;
+}
+
+#jumpy {
+	position: fixed;
+	top: 10px;
+	right: 50px;
+}

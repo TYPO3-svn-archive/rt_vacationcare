@@ -1,0 +1,31 @@
+plugin.tx_rtvacationcare_pi2 {
+	caretakerstore = {$plugin.tx_rtvacationcare_pi2.caretakerstore}
+	caretakeradmin = {$plugin.tx_rtvacationcare_pi2.caretakeradmin}
+	logoutpid = {$plugin.tx_rtvacationcare_pi2.logoutpid}
+	
+	templateFile = {$plugin.tx_rtvacationcare_pi2.templateFile}
+	
+	activeYear = {$plugin.tx_rtvacationcare_pi2.activeYear}
+	
+	imageTitle_stdWrap {
+		wrap = <h2>|</h2>
+	}
+	header_stdWrap {
+		wrap = <h2>|</h2>
+	}
+	image = IMAGE
+	image {
+		file.width = 100m
+		file.height = 100m
+	}
+	imageTooltip = IMAGE
+	imageTooltip {
+		file.width = 400m
+		file.height = 400m
+	}
+	vacListIcon = IMAGE
+	vacListIcon {
+		file.width = 20m
+		file.height = 20m
+	}
+}

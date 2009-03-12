@@ -1,0 +1,12 @@
+plugin.tx_rtvacationcare_pi2 {
+	# cat=Vacation Care /links; type=int+; label=PID of caretaker-storage
+	caretakerstore = 20
+	# cat=Vacation Care /links; type=int+; label=PID of Caretaker Admin
+	caretakeradmin = 26
+	# cat=Vacation Care /links; type=int+; label=PID of Logoutpage
+	logoutpid = 17
+	# cat=Vacation Care /dims; type=int+; label=Preselected Year = Active Year
+	activeYear = 2009
+	# cat=Vacation Care/file;type=string; label=Template File
+	templateFile = EXT:rt_vacationcare/pi2/res/caretaker-manage.html
+}
