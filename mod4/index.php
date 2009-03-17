@@ -286,6 +286,31 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 					$out .= '<tr style="font-weight: bold; background-color: #ccc"><td>'.$LANG->getLL('nameFirstname').'</td><td>'.$LANG->getLL('feAccount').'</td><td>'.$LANG->getLL('email').'</td><td>'.$LANG->getLL('birthdate').'</td><td>'.$LANG->getLL('phone').'</td><td></td></tr>';
 					// frontend account pid
 					while($theCaretaker = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($caretakerRes)) {
+						// is there a fe_user for this address
+						/*
+$res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+							'COUNT(*) as count',
+							'fe_users_user_feloginaddress_tt_address_mm',
+							'uid_foreign = '.$theCaretaker['uid']);
+						$row = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($res);
+						
+						$username = strtolower($theCaretaker['first_name'].'.'.$theCaretaker['last_name']);
+						$pw = md5($this->rand_string(8));
+						$email = strtolower($theCaretaker['email']);
+						$now = time();
+						$insertArray = array('pid' => '25', 'tstamp' => $now, 'username' => $username, 'password' => $pw, 'usergroup' => '1', 'email' => $email, 'crdate' => $now, 'cruser_id' => '1', 'user_feloginaddress_tt_address' => '1');
+#echo t3lib_div::debug($insertArray,'');
+						if ($row['count'] == 0) {
+							// create new fe_user
+							
+							#$insertFE = $GLOBALS['TYPO3_DB']->exec_INSERTquery('fe_users',$insertArray);
+							$newId = $GLOBALS['TYPO3_DB']->sql_insert_id();
+							
+							// mm 
+							$mmArray = array('uid_foreign' => $theCaretaker['uid'], 'uid_local' => $newId, 'sorting' => '1');
+
+							#$insertMM = $GLOBALS['TYPO3_DB']->exec_INSERTquery('fe_users_user_feloginaddress_tt_address_mm',$mmArray);
+						}*/
 						// init edit options
 						$editUid = $theCaretaker['uid'];
 						$editTable = 'tt_address';
@@ -334,14 +359,29 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 					// edit link
 					if ((int)$feData['fe_id'] > 0) {
 						$params='&edit['.$editTable.']['.$editUid.']=edit';
-						$out .= '<a href="#" onclick="'.htmlspecialchars(t3lib_BEfunc::editOnClick($params,$GLOBALS['BACK_PATH'])).'"><img'.t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'],'gfx/i/fe_users.gif','width="11" height="12"').' title="'.$LANG->getLL('titleSingular').' - '.$theCaretaker['first_name'].'- '.$LANG->getLL('edit').'" border="0" alt="" /></a>'; 
+						$out .= '<a href="#" onclick="'.htmlspecialchars(t3lib_BEfunc::editOnClick($params,$GLOBALS['BACK_PATH'])).'"><img'.t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'],'gfx/i/fe_users.gif','width="11" height="12"').' title="bearbeiten" border="0" alt="" /></a>'; 
 					} else {
 						$params='&edit['.$editTable.']['.$feuPid.']=new&defVals['.$editTable.'][user_feloginaddress_tt_address]='.$userId.'&defVals['.$editTable.'][usergroup]=1&defVals['.$editTable.'][email]='.$userData['email'].'&defVals['.$editTable.'][name]='.$userData['first_name'].' '.$userData['last_name'];
-						$out .= '<a href="#" onclick="'.htmlspecialchars(t3lib_BEfunc::editOnClick($params,$GLOBALS['BACK_PATH'])).'"><img'.t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'],'gfx/i/fe_users__h.gif','width="11" height="12"').' title="'.$LANG->getLL('titleSingular').' - '.$theCaretaker['first_name'].'- '.$LANG->getLL('edit').'" border="0" alt="" /></a>'; 
+						$out .= '<a href="#" onclick="'.htmlspecialchars(t3lib_BEfunc::editOnClick($params,$GLOBALS['BACK_PATH'])).'"><img'.t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'],'gfx/i/fe_users__h.gif','width="11" height="12"').' title="erstellen" border="0" alt="" /></a>'; 
 					}
 					
 					return $out;
 				}
+				
+				function rand_string($lng) {
+   mt_srand(crc32(microtime()));
+
+   //Welche Buchstaben benutzt werden sollen (Charset)
+   $buchstaben = "abcdefghijkmnpqrstuvwxyz123456789";
+   
+   $str_lng = strlen($buchstaben)-1;
+   $rand= "";
+
+   for($i=0;$i<$lng;$i++)        
+      $rand.= $buchstaben{mt_rand(0, $str_lng)};
+      
+   return $rand;
+   } 
 				
 			}
 

@@ -686,7 +686,7 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 						$kcont .= ' <a href="index.php?SET[function]=1&SET[getPdf]='.$editUid.'"><img'.t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'],'gfx/fileicons/pdf.gif','width="11" height="12"').' title="Bestätigung erstellen" border="0" alt="" /></a>';
 						$kcont .= '</td>';
 						// date
-						$kcont .= '<td>'.$weekDaysArray[date('w', $allVacations['startdate'])].', '.date('d.m.Y H:i', $allVacations['startdate']).'</td>';
+						$kcont .= '<td>'.substr($weekDaysArray[date('w', $allVacations['startdate'])], 0, 2).'. '.date('d.m H:i', $allVacations['startdate']).'h</td>';
 						// confirmed
 						$kcont .= '<td style="text-align: center;">'.$this->checkAppBook($allVacations['approved'], $editTable, $editUid, 'approved').'</td>';
 						// booked
@@ -694,7 +694,7 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 						// attendees
 						$kcont .= '<td style="text-align: center;">'.$this->getAttendees($allVacations['uid']).'</td>';
 						// caretakers
-						$kcont .= '<td style="text-align: center;">'.$this->getCaretaker($allVacations['uid']).'</td>';
+						$kcont .= '<td style="text-align: center;">'.$this->getCaretaker($allVacations['uid'], $allVacations['maxcaretaker']).'</td>';
 						// quickview
 						$kcont .= '<td style="text-align: center;"><a href="index.php?SET[vacationId]='.$editUid.'&SET[function]=3"><img'.t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'],'gfx/icon_note.gif','width="11" height="12"').' title="'.$LANG->getLL('titleSingular').' -'.$allVacations['nr'].' '.$allVacations['title'].'- '.$LANG->getLL('quickview').'" border="0" alt="" /></a></td>';
 						// infofield
@@ -758,7 +758,7 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 				}
 				
 				
-				function getCaretaker($vacationId) {
+				function getCaretaker($vacationId, $maxCaretaker) {
 					global $LANG;
 					$out = '';
 					$params = '&edit[tx_rtvacationcare_vacations]['.$vacationId.']=edit&columnsOnly=caretaker';
@@ -777,10 +777,14 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 					$wishes = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($wishRes);
 					$wishes = $wishes['wishes'];
 					if ($wishes > 0) {
-						$theWishes .= ' - ['.$wishes.']';
+						$theWishes .= ' W:'.$wishes;
 					}					
 					// make link
-					$out .= '<a href="index.php?SET[vacationId]='.$vacationId.'&SET[function]=4" title="'.$LANG->getLL('edit').'">['.$count.'] '.$theWishes.'</a>';
+					$out .= '<a href="index.php?SET[vacationId]='.$vacationId.'&SET[function]=4" title="'.$LANG->getLL('edit').'">';
+					if ((int)$maxCaretaker>0) {
+						$out .= 'M:'.$maxCaretaker;
+					}
+					$out .= ' E:'.$count.$theWishes.'</a>';
 					
 
 					return $out;

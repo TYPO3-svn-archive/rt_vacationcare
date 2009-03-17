@@ -232,11 +232,14 @@ Deine Begründung:
 	 */
 	protected function startTab() {
 		$out = '';
+		// next vacation widget
+		$out .= $this->widgetNextVacation();
 		
+		// start infos
 		$startContentRes = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 			'*',
 			'tx_rtvacationcare_start',
-			'1=1'.$this->cObj->enableFields('tx_rtvacationcare_start') );
+			'1=1'.$this->cObj->enableFields('tx_rtvacationcare_start'),'','crdate DESC' );
 		while ($startContent = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($startContentRes) ) {
 			$out .= '<div class="startcontentbox">';
 			$out .= '<h3>'.$startContent['header'].'</h3>';
@@ -532,7 +535,7 @@ Deine Begründung:
 		$out .= '<h2>Alle '.$this->pi_getLL('titlePlural').' in '.$activeYear.'</h2>';
 		$out .= '<table style="padding:4px; margin: 6px;">';
 		// table header
-		$out .= '<tr class="tableHeader"><td>'.$this->pi_getLL('nr').'</td><td>'.$this->pi_getLL('title').'</td><td>'.$this->pi_getLL('date').'</td><td>'.$this->pi_getLL('confirmed').'</td><td>'.$this->pi_getLL('status').'</td></tr>';
+		$out .= '<tr class="tableHeader"><td>'.$this->pi_getLL('nr').'</td><td>'.$this->pi_getLL('title').'</td><td>'.$this->pi_getLL('date').'</td><td>'.$this->pi_getLL('confirmed').'</td><td>'.$this->pi_getLL('openCaretakers').'</td><td>'.$this->pi_getLL('status').'</td></tr>';
 		$counter = 0;
 
 		while($allVacations = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($vacationRes)) {
@@ -559,6 +562,20 @@ Deine Begründung:
 			
 			// vacation date
 			$out .= '</td><td>'.date('d.m.Y H:i', $allVacations['startdate']).'</td><td style="text-align: center;">'.$booked.'</td>';
+			
+			// open caretaker
+			$out .= '<td>';
+			if ($allVacations['maxcaretaker'] > 0) {
+				$planedCaretakerRes = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+					'COUNT(*) as planed',
+					'tx_rtvacationcare_vacations_caretaker_mm',
+					'uid_local = '.$allVacations['uid']);
+				$planedCaretaker = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($planedCaretakerRes);
+				$planedCaretakers = $allVacations['maxcaretaker']-$planedCaretaker['planed'];
+				if ($planedCaretakers <= 0) $planedCaretakers = 0;
+				$out .= $planedCaretakers;
+			}
+			$out .= '</td>';
 			
 			// link to make wish
 			$fe_userId = $GLOBALS['TSFE']->fe_user->user['uid'];
@@ -595,11 +612,12 @@ Deine Begründung:
 		
 		$out .= '<table style="padding:4px; margin: 6px;">';
 		// table header
-		$out .= '<tr class="tableHeader"><td>'.$this->pi_getLL('nr').'</td><td>'.$this->pi_getLL('title').'</td><td>'.$this->pi_getLL('date').'</td><td>'.$this->pi_getLL('confirmed').'</td><td>'.$this->pi_getLL('status').'</td><td>'.$this->pi_getLL('download').'</td></tr>';
+		$out .= '<tr class="tableHeader"><td>'.$this->pi_getLL('nr').'</td><td>'.$this->pi_getLL('title').'</td><td>'.$this->pi_getLL('date').'</td><td>'.$this->pi_getLL('status').'</td><td>'.$this->pi_getLL('download').'</td></tr>';
 		$counter = 0;
 
 		while($allVacations = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($vacationRes)) {
 			# confirmed ?
+/*
 			$listIcon = array();
 			$listIcon = $this->conf['vacListIcon.'];
 			$listIcon['file'] = $this->path.'res/betreuer/pfeil-rot.gif';
@@ -610,6 +628,7 @@ Deine Begründung:
 				$listIcon['file'] = $this->path.'res/betreuer/pfeil-gruen.gif';
 				 $booked = $this->cObj->IMAGE($listIcon);
 			}
+*/
 			if($counter%2 == 0 ? $rowClass='even' : $rowClass = 'odd'); 
 			$out .= '<tr class="'.$rowClass.'">';
 			$out .= '<td style="text-align: right;">'.$allVacations['nr'].'</td><td>';
@@ -621,7 +640,8 @@ Deine Begründung:
 			$out .= '<div class="vacationdescription">'.$allVacations['description'].'</div>';
 			
 			// vacation date
-			$out .= '</td><td>'.date('d.m.Y H:i', $allVacations['startdate']).'</td><td style="text-align: center;">'.$booked.'</td>';
+			#$out .= '</td><td>'.date('d.m.Y H:i', $allVacations['startdate']).'</td><td style="text-align: center;">'.$booked.'</td>';
+			$out .= '</td><td>'.date('d.m.Y H:i', $allVacations['startdate']).'</td>';
 			
 			// link to make wish
 			$fe_userId = $GLOBALS['TSFE']->fe_user->user['uid'];
@@ -667,7 +687,46 @@ function changeForm (vTitle, vacId) {
 		return $out;
 	}
 	
+	protected function widgetNextVacation() {
+		$out .= '<div class="startcontentbox widget">';
+		$out .= '<h3>'.$this->pi_getLL('widget.nextvacation.header').'</h3>';
+		$today = time();
+		// get tt_address uid for fe_user
+		$feuId = $GLOBALS['TSFE']->fe_user->user['uid'];
+		$ttaddressRes = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+			'uid_foreign',
+			'fe_users_user_feloginaddress_tt_address_mm',
+			'uid_local = '.$feuId);
+		$ttAddress = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($ttaddressRes);
+		$ttAddress = $ttAddress['uid_foreign'];
 
+		$nextVacRes = $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query(
+			'tx_rtvacationcare_vacations.*', #SELECT
+			'tx_rtvacationcare_vacations', # local table
+			'tx_rtvacationcare_vacations_caretaker_mm', # mm table
+			'tt_address', #foreign
+			'AND uid_foreign = "'.$ttAddress.'" AND tx_rtvacationcare_vacations.startdate > '.$today,
+			'',# group by
+			'tx_rtvacationcare_vacations.startdate ASC',
+		1);
+		
+		$nextVac = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($nextVacRes);
+		$conf = array(
+		  // Link to current page
+		  'parameter' => $GLOBALS['TSFE']->id.'#myVacations',
+		  // fake additional param for selecting different tab	
+		  'additionalParams' => '&move[tab]=1',
+		  // We must add cHash because we use parameters
+		  'useCashHash' => true,
+		  // We want link only
+		  'returnLast' => 'url',
+		);
+		$url = $this->cObj->typoLink('', $conf);
+		$out .= '<p><a href="'.$url.'">'.$nextVac['title'].'<br />'.date('d.m.Y', $nextVac['startdate']).' bis '.date('d.m.Y', $nextVac['enddate']).'</a></p>';
+		$out .= '</div>';
+		return $out;
+	}
+	
 }
 
 if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/rt_vacationcare/pi2/class.tx_rtvacationcare_pi2.php'])	{

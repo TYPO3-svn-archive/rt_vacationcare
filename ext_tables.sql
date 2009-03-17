@@ -89,7 +89,7 @@ CREATE TABLE tx_rtvacationcare_vacations (
 	info text NOT NULL,
 	info2 text NOT NULL,
 	info3 text NOT NULL,
-	maxattendees int(11) DEFAULT '0' NOT NULL,
+	maxcaretaker int(11) DEFAULT '0' NOT NULL,
 	caretaker int(11) DEFAULT '0' NOT NULL,
 	lodging int(11) DEFAULT '0' NOT NULL,
 	caretakerwish int(11) DEFAULT '0' NOT NULL,

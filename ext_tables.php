@@ -88,7 +88,7 @@ $TCA["tx_rtvacationcare_vacations"] = array (
 		'iconfile'          => t3lib_extMgm::extRelPath($_EXTKEY).'icon_tx_rtvacationcare_vacations.gif',
 	),
 	"feInterface" => array (
-		"fe_admin_fieldList" => "sys_language_uid, l18n_parent, l18n_diffsource, hidden, nr, booked, approved, title, description, startdate, enddate, luggage, pocketmoney, snack, price, meetingpoint, info, info2, info3, maxattendees, caretaker, caretakerwish, lodging",
+		"fe_admin_fieldList" => "sys_language_uid, l18n_parent, l18n_diffsource, hidden, nr, booked, approved, title, description, startdate, enddate, luggage, pocketmoney, snack, price, meetingpoint, info, info2, info3, maxcaretaker, caretaker, caretakerwish, lodging",
 	)
 );
 

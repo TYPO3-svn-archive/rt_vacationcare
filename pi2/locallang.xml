@@ -11,6 +11,7 @@
 			<label index="titlePlural">Freizeiten</label>
 			<label index="date">Datum:</label>
 			<label index="confirmed">Bestätigt:</label>
+			<label index="openCaretakers">Offene Betreuer:</label>
 			<label index="status">Mein Status:</label>
 			<label index="download">Bestätigung</label>
 			<label index="cancelWish">Wunsch stornieren</label>
@@ -19,6 +20,7 @@
 			<label index="wishConfirmedLinkText">Möchtest du bei dieser Freizeit nicht betreuen ? (Du hast dafür aber einen Wunsch abgegeben...)</label>
 			<label index="justConfirmed">Eingetragen</label>
 			<label index="justConfirmedLinkText">Möchtest du bei dieser Freizeit nicht betreuen ?</label>
+			<label index="widget.nextvacation.header">Meine nächste Freizeit:</label>
 			<!-- PDF CONTENTS -->
 			<label index="pdf.salutation">Grüß Gott,</label>
 		</languageKey>

@@ -22,7 +22,7 @@
 			<label index="tx_rtvacationcare_vacations.info">Info</label>
 			<label index="tx_rtvacationcare_vacations.info2">Info 2</label>
 			<label index="tx_rtvacationcare_vacations.info3">Info 3</label>
-			<label index="tx_rtvacationcare_vacations.maxattendees">Maximum attendees</label>
+			<label index="tx_rtvacationcare_vacations.maxcaretaker">Maximum caretakers</label>
 			<label index="tx_rtvacationcare_vacations.caretaker">Caretaker</label>
 			<label index="tx_rtvacationcare_vacations.attendees">Attendees</label>
 			<label index="tx_rtvacationcare_vacations.lodging">Lodging</label>
@@ -74,7 +74,7 @@
 			<label index="tx_rtvacationcare_vacations.info">Info</label>
 			<label index="tx_rtvacationcare_vacations.info2">Finanzen</label>
 			<label index="tx_rtvacationcare_vacations.info3">Bus</label>
-			<label index="tx_rtvacationcare_vacations.maxattendees">Maximale Teilnehmer</label>
+			<label index="tx_rtvacationcare_vacations.maxcaretaker">Maximale Betreuer</label>
 			<label index="tx_rtvacationcare_vacations.caretaker">Betreuer</label>
 			<label index="tx_rtvacationcare_vacations.caretakerwish">Betreuerwünsche</label>
 			<label index="tx_rtvacationcare_vacations.caretakerchief">Leitung</label>

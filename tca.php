@@ -4,7 +4,7 @@ if (!defined ('TYPO3_MODE')) 	die ('Access denied.');
 $TCA["tx_rtvacationcare_vacations"] = array (
 	"ctrl" => $TCA["tx_rtvacationcare_vacations"]["ctrl"],
 	"interface" => array (
-		"showRecordFieldList" => "sys_language_uid,l18n_parent,l18n_diffsource,hidden,nr,booked,approved,title,description,startdate,enddate,luggage,pocketmoney,snack,price,meetingpoint,image,info,info2,info3,maxattendees,caretaker,caretakerchief,caretakerwish,lodging"
+		"showRecordFieldList" => "sys_language_uid,l18n_parent,l18n_diffsource,hidden,nr,booked,approved,title,description,startdate,enddate,luggage,pocketmoney,snack,price,meetingpoint,image,info,info2,info3,maxcaretaker,caretaker,caretakerchief,caretakerwish,lodging"
 	),
 	"feInterface" => $TCA["tx_rtvacationcare_vacations"]["feInterface"],
 	"columns" => array (
@@ -226,9 +226,9 @@ $TCA["tx_rtvacationcare_vacations"] = array (
 				"rows" => "10",
 			)
 		),
-		"maxattendees" => Array (		
+		"maxcaretaker" => Array (		
 			"exclude" => 1,		
-			"label" => "LLL:EXT:rt_vacationcare/locallang_db.xml:tx_rtvacationcare_vacations.maxattendees",		
+			"label" => "LLL:EXT:rt_vacationcare/locallang_db.xml:tx_rtvacationcare_vacations.maxcaretaker",		
 			"config" => Array (
 				"type"     => "input",
 				"size"     => "4",
@@ -354,7 +354,7 @@ $TCA["tx_rtvacationcare_vacations"] = array (
 		),
 	),
 	"types" => array (
-		"0" => array("showitem" => "hidden;;1, nr,booked, approved, title;;;;2-2-2, description;;;richtext[cut|copy|paste|formatblock|textcolor|bold|italic|underline|left|center|right|orderedlist|unorderedlist|outdent|indent|link|table|image|line|chMode]:rte_transform[mode=ts_css|imgpath=uploads/tx_rtvacationcare/rte/];3-3-3, startdate, enddate, luggage, pocketmoney, snack, price, meetingpoint, image, info, info2, info3, maxattendees, caretaker, caretakerchief, caretakerwish, lodging")
+		"0" => array("showitem" => "hidden;;1, nr,booked, approved, title;;;;2-2-2, description;;;richtext[cut|copy|paste|formatblock|textcolor|bold|italic|underline|left|center|right|orderedlist|unorderedlist|outdent|indent|link|table|image|line|chMode]:rte_transform[mode=ts_css|imgpath=uploads/tx_rtvacationcare/rte/];3-3-3, startdate, enddate, luggage, pocketmoney, snack, price, meetingpoint, image, info, info2, info3, maxcaretaker, caretaker, caretakerchief, caretakerwish, lodging")
 	),
 	"palettes" => array (
 		"1" => array("showitem" => "")
