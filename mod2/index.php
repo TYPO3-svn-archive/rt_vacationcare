@@ -36,7 +36,7 @@ require_once(PATH_t3lib.'class.t3lib_scbase.php');
 $BE_USER->modAccess($MCONF,1);	// This checks permissions and exits if the users has no permission for entry.
 	// DEFAULT initialization of a module [END]
 
-$attendeeFields = 'gender,first_name,last_name,birthday,email,phone,address,zip,city,image,user_attendeeaddress_dossier,user_attendeeaddress_wheelchair,user_attendeeaddress_specials,user_attendeeaddress_c_address,user_attendeeaddress_c_zip,user_attendeeaddress_c_city,user_attendeeaddress_c_phone,user_attendeeaddress_c_mobile,user_attendeeaddress_c_mail,user_attendeeaddress_c_name,user_attendeeaddress_c_relation,user_attendeeaddress_c_fax,user_attendeeaddress_c_invoice';
+$attendeeFields = 'gender,first_name,last_name,birthday,email,phone,address,zip,city,image,user_attendeeaddress_dossier,user_attendeeaddress_wheelchair,user_attendeeaddress_blind,user_attendeeaddress_specials,user_attendeeaddress_c_address,user_attendeeaddress_c_zip,user_attendeeaddress_c_city,user_attendeeaddress_c_phone,user_attendeeaddress_c_mobile,user_attendeeaddress_c_mail,user_attendeeaddress_c_name,user_attendeeaddress_c_relation,user_attendeeaddress_c_fax,user_attendeeaddress_c_invoice,user_attendeeaddress_c_invoice_address';
 $caretakerFields = 'gender,first_name,last_name,birthday,email,phone,fax,mobile,address,zip,city,country,image';
 
 
@@ -515,7 +515,7 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 					#$kcont .= '<form action="index.php?SET[function]=2" name="newRegistrations" method="post" enctype="multipart/form-data">';
 					$kcont .= '<input type="hidden" name="newRegistration" value="1" />
 					<input type="hidden" name="vacationId" value="'.$vacId.'" />';
-					$kcont .= '<select name="setNewAttendee[]" size="10" style="width:250px;" multiple="multiple">';
+					$kcont .= '<select name="setNewAttendee[]" size="15" style="width:250px;" multiple="multiple">';
 					$allAttendeeRes = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 						'*',
 						'tt_address',
@@ -633,7 +633,7 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 						'tx_rtvacationcare_vacations',
 						'FROM_UNIXTIME(startdate, "%Y" ) = '.$activeYear,
 						'',
-						'title');
+						'nr');
 					
 					// count vacations
 					$vacationCountRes = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
@@ -665,7 +665,7 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 						$LANG->getLL('sat'));
 					// listview table
 					$kcont .= '<h2>'.$vacationCount.' '.$LANG->getLL('title').' '.$LANG->getLL('for').' '.$activeYear.'</h2>';
-					$kcont .= '<table style="padding:4px; margin: 2px;">';
+					$kcont .= '<table style="padding:4px; margin: 2px;" width="760">';
 					// table header
 					$kcont .= '<tr style="font-weight: bold; background-color: #ccc"><td>'.$LANG->getLL('nr').'</td><td>'.$LANG->getLL('title').'</td><td>'.$LANG->getLL('date').'</td><td>'.$LANG->getLL('confirmed').'</td><td>'.$LANG->getLL('booked').'</td><td>'.$LANG->getLL('attendees').'</td><td>'.$LANG->getLL('caretakers').'</td><td>'.$LANG->getLL('quickview').'</td><td>Infofeld</td><td>'.$LANG->getLL('edit').'</td></tr>';
 					$counter = 0;
@@ -686,7 +686,7 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 						$kcont .= ' <a href="index.php?SET[function]=1&SET[getPdf]='.$editUid.'"><img'.t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'],'gfx/fileicons/pdf.gif','width="11" height="12"').' title="Bestätigung erstellen" border="0" alt="" /></a>';
 						$kcont .= '</td>';
 						// date
-						$kcont .= '<td>'.substr($weekDaysArray[date('w', $allVacations['startdate'])], 0, 2).'. '.date('d.m H:i', $allVacations['startdate']).'h</td>';
+						$kcont .= '<td>'.date('d.m', $allVacations['startdate']).'. - '.date('d.m', $allVacations['enddate']).'.</td>';
 						// confirmed
 						$kcont .= '<td style="text-align: center;">'.$this->checkAppBook($allVacations['approved'], $editTable, $editUid, 'approved').'</td>';
 						// booked
@@ -951,7 +951,7 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 					#$out .= '<form  action="index.php?SET[vacationId]='.$vId.'&SET[function]=4&SET[newConfirmations]=1" name="newConfirmations" method="post" enctype="multipart/form-data">';
 					$out .= '<input type="hidden" name="newConfirmations" value="1" />
 					<input type="hidden" name="vacationId" value="'.$vId.'" />';
-					$out .= '<select name="setNewCaretaker[]" size="10" style="width:250px;" multiple="multiple">';
+					$out .= '<select name="setNewCaretaker[]" size="15" style="width:250px;" multiple="multiple">';
 					$allCaretakerRes = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 						'*',
 						'tt_address',
