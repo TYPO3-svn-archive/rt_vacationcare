@@ -674,7 +674,21 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 						$editUid = $allVacations['uid'];
 						$params='&edit['.$editTable.']['.$editUid.']=edit';
 						// colours
-						if($allVacations['maxattendees'] >= $this->countAttendees($editUid)) {
+						// get lodging and therefore the max number of places
+						$lodgingRes = $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query(
+							'tx_rtvacationcare_lodgings.max as lodging_max', #SELECT
+							'tx_rtvacationcare_vacations', # local table
+							'tx_rtvacationcare_vacations_lodging_mm', # mm table
+							'tx_rtvacationcare_lodgings', #foreign
+							'AND tx_rtvacationcare_vacations_lodging_mm.uid_local = "'.$editUid.'" ');
+						$theLodge = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($lodgingRes);
+						// count attendees
+						$attendeeAmount = $this->countAttendees($editUid);
+						// count caretaker
+						$caretakerAmount = $this->getCaretaker($editUid,0,1);
+						
+						// but check with countAttendees and countCaretaker
+						if($theLodge['lodging_max'] >= ($attendeeAmount + $caretakerAmount) ) {
 							$cellColour = 'green';
 						} else {
 							$cellColour = 'red';
@@ -758,7 +772,7 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 				}
 				
 				
-				function getCaretaker($vacationId, $maxCaretaker) {
+				function getCaretaker($vacationId, $maxCaretaker, $onlyAmount=0) {
 					global $LANG;
 					$out = '';
 					$params = '&edit[tx_rtvacationcare_vacations]['.$vacationId.']=edit&columnsOnly=caretaker';
@@ -786,6 +800,9 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 					}
 					$out .= ' E:'.$count.$theWishes.'</a>';
 					
+					if ($onlyAmount == 1) {
+						$out = $count;
+					}
 
 					return $out;
 				}
