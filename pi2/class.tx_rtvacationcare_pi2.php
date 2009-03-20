@@ -373,7 +373,7 @@ Deine Begründung:
 			  // Set additional parameters
 			  'additionalParams' => '&tx_rtvacationcare_pi2[vacwish]='.$vId,
 			  // We must add cHash because we use parameters
-			  'useCashHash' => true,
+			  'useCacheHash' => true,
 			  // We want link only
 			  'returnLast' => 'url',
 			);
@@ -653,7 +653,7 @@ Deine Begründung:
 			  // Set additional parameters
 			  'additionalParams' => '&tx_rtvacationcare_pi2[makePdf]='.$allVacations['uid'],
 			  // We must add cHash because we use parameters
-			  'useCashHash' => true,
+			  'useCacheHash' => true,
 			  // We want link only
 			  'returnLast' => 'url',
 			);
@@ -717,7 +717,7 @@ function changeForm (vTitle, vacId) {
 		  // fake additional param for selecting different tab	
 		  'additionalParams' => '&move[tab]=1',
 		  // We must add cHash because we use parameters
-		  'useCashHash' => true,
+		  'useCacheHash' => true,
 		  // We want link only
 		  'returnLast' => 'url',
 		);
