@@ -178,7 +178,7 @@ Deine Begründung:
 			// $this->formatAsPDF($vacation);
 			
 			$pdfClass = t3lib_div::makeInstance('tx_rtvacationcare_pdfconf');
-			$makePdf = $pdfClass->formatAsPDF($vacation);
+			$makePdf = $pdfClass->formatAsPDF($vacation, '', 1, 1);
 
 			exit();
 		}

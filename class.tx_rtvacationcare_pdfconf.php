@@ -67,14 +67,14 @@ class tx_rtvacationcare_pdfconf   {
 	 * @return	string		Formatted data
 	 */
 
-	function formatAsPDF($vacation) {
+	function formatAsPDF($vacation, $useName = '', $showPictures = 1, $pdfShowInfo = 1) {
 		$fileTitle = str_replace(' ', '_', utf8_decode($vacation['title'])).'.pdf';
 			// Check if the FPDF library is loaded (extension 'FDPF'). If not, return immediately.
 		if (!t3lib_extMgm::isLoaded('fpdf')) return;
 
 			// Get a new instance of the FPDF library
 		// content of pdf
-		$salutation = utf8_decode('Grüß Gott,');
+		$salutation = utf8_decode('Grüß Gott, '.$useName.'.');
 		$theDate = 'Murnau, im '.$this->getMonth(date('n', time())).' '.date('Y', time());
 		
 		$header1 = utf8_decode('hiermit bestätigen wir die Teilnahme an der Freizeit:');
@@ -235,7 +235,7 @@ class tx_rtvacationcare_pdfconf   {
 		
 		// table attendees
 		$tableHeader = array('Name:', 'Vorname:', 'Strasse:', 'PLZ, Ort:', 'Telefon:', 'Geburtstag:');
-		$pdf->peopleTable($tableHeader, $attendees, $vacation);
+		$pdf->peopleTable($tableHeader, $attendees, $vacation, 0);
 		
 		// graphical header 2
 		$pdf->Ln();
@@ -264,47 +264,123 @@ class tx_rtvacationcare_pdfconf   {
 		// --------------------------------------------------------------------------
 	    // pictures
 		//
-		$pdf->AddPage();
-		$imagePath = 'uploads/pics/';
-		$count = 1;
-		$posX = 10;
-		$posY = $pdf->GetY();
-		for ($i = 0; $i <= count($allImages); $i++) {
-			if ($allImages[$i]['image'] != '') {	
-		    	$imageSize = getimagesize(PATH_site.$imagePath.utf8_encode($allImages[$i]['image']));
-				if ($imageSize[0] > $imageSize[1]) {
-					// quer
-					$pdf->Image(PATH_site.$imagePath.utf8_encode($allImages[$i]['image']),$posX,$posY,0,30);
-					$format = $imageSize[0]/30;
-					$newWidth = $imageSize[1]/$format+10;
-					$posX += $newWidth+20;
-				} else {
-					// hoch
-					$pdf->Image(PATH_site.$imagePath.utf8_encode($allImages[$i]['image']),$posX,$posY,20,0);
-					$posX += 30;
+		if ($showPictures == 1) {
+			$pdf->AddPage();
+			$imagePath = 'uploads/pics/';
+			$count = 1;
+			$posX = 10;
+			$posY = $pdf->GetY();
+			for ($i = 0; $i <= count($allImages); $i++) {
+				if ($allImages[$i]['image'] != '') {	
+			    	$imageSize = getimagesize(PATH_site.$imagePath.utf8_encode($allImages[$i]['image']));
+					if ($imageSize[0] > $imageSize[1]) {
+						// quer
+						$pdf->Image(PATH_site.$imagePath.utf8_encode($allImages[$i]['image']),$posX,$posY,0,30);
+						$format = $imageSize[0]/30;
+						$newWidth = $imageSize[1]/$format+10;
+						$posX += $newWidth+20;
+					} else {
+						// hoch
+						$pdf->Image(PATH_site.$imagePath.utf8_encode($allImages[$i]['image']),$posX,$posY,20,0);
+						$posX += 30;
+					}
+					
+					$pdf->Text($posX-25, $posY+35, $allImages[$i]['name']);
+			    	
+			    	if ($posX >= 180) {
+			    		$posX = 10;
+			    		$posY+= 50;
+			    	}
+			    	#$pdf->Ln();
+			    	$count++;
 				}
-				
-				$pdf->Text($posX-25, $posY+35, $allImages[$i]['name']);
-		    	
-		    	if ($posX >= 180) {
-		    		$posX = 10;
-		    		$posY+= 50;
-		    	}
-		    	#$pdf->Ln();
-		    	$count++;
-			}
-		}
+			}	    
+	    }
+	
 		
 		// --------------------------------------------------------------------------
 		// info text
  		//
- 		if ($vacation['info']) {
+ 		if ($vacation['info'] && $pdfShowInfo == 1) {
  			$pdf->AddPage();
  			$pdf->MultiCell(0,5, utf8_decode($vacation['info']));
  		}
  		
  		
  		
+		// Convert to PDF
+		$content = $pdf->Output($fileTitle,'D');
+		return $out;
+	}
+	
+	
+	function formatInvoice($recipient, $vacation) {
+		$fileTitle = 'Rechnung_'.str_replace(' ', '_', utf8_decode($vacation['title'])).'.pdf';
+			// Check if the FPDF library is loaded (extension 'FDPF'). If not, return immediately.
+		if (!t3lib_extMgm::isLoaded('fpdf')) return;
+
+			
+		// content of pdf
+		$salutation = utf8_decode('Grüß Gott, '.$useName.'.');
+		$theDate = 'Murnau, im '.$this->getMonth(date('n', time())).' '.date('Y', time());
+		
+		$header1 = utf8_decode('hiermit bestätigen wir die Teilnahme an der Freizeit:');
+
+		// get recipient data
+		$toAddress = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+			'*',
+			'tt_address',
+			'uid = '.$recipient);
+		$toAddress = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($toAddress);
+		$theAddress = $toAddress['user_attendeeaddress_c_invoice_address'];
+		// Get a new instance of the FPDF library
+		$pdf=new myPDF('portrait', 'mm', 'A4');
+		
+		
+		$pdf->payText1 = '';
+		$pdf->payText2 = '';
+		// go
+		$pdf->tx_fpdf->template = PATH_site.'fileadmin/templates/pdf/template-Rechnung.pdf';
+		$pdf->AliasNbPages();
+		$pdf->SetAuthor( 'Kunterbunt e.V.' );
+		$pdf->SetTitle(utf8_decode('Rechnung für Freizeit '.$vacation['title']));
+		$pdf->SetTopMargin(40);
+		
+		// ---------------------------------------------------------------
+		// first page
+		//
+		$pdf->AddPage();
+		$pdf->SetFont('Arial','',10);
+
+		$pdf->Cell(10,5);
+	    $pdf->MultiCell(40,5, utf8_decode($theAddress));
+	    $pdf->Ln(21);
+		$pdf->Cell(50);
+		$pdf->SetFont('Arial','',15);
+	    $pdf->Cell(120,10,$theDate,0,'','R');
+	    
+	    // name
+	    $pdf->SetFont('Arial','',20);
+	    $pdf->Ln(30);
+	    $pdf->Cell(20);
+	    $pdf->Cell(0,5, utf8_decode($toAddress['first_name'].' '.$toAddress['last_name']));
+	    
+	    // from to date
+	    $pdf->SetFont('Arial','',10);
+	    $pdf->Ln(20);
+	    $pdf->Cell(25);
+	    $theTime = date('d.m.Y', $vacation['startdate']).' - '.date('d.m.Y', $vacation['enddate']);
+	    $pdf->Cell(0,5, utf8_decode($theTime));
+	    
+	    // price 1
+	    $pdf->SetFont('Arial','',13);
+	    $pdf->Ln(38);
+	    $pdf->Cell(100);
+	    $pdf->Cell(30,5, utf8_decode($vacation['price'].',- EUR'));
+	    // price sum
+	    $pdf->Ln(20);
+	    $pdf->Cell(100);
+	    $pdf->Cell(30,5, utf8_decode($vacation['price'].',- EUR'));
 		// Convert to PDF
 		$content = $pdf->Output($fileTitle,'D');
 		return $out;
@@ -391,7 +467,7 @@ class myPDF extends PDF {
             $this->Cell(0,10, $this->payText2,0,0,'C'); 
     }
     
-	function peopleTable($header, $data, $vacation) {
+	function peopleTable($header, $data, $vacation, $caretaker = 1) {
 		$this->Ln();
 		$this->SetFontSize('9');
 		$this->SetTextColor(0,200,0);
@@ -425,7 +501,7 @@ class myPDF extends PDF {
 				$this->SetTextColor(0,0,0);
 				$this->Cell(32,6,$at['last_name']);
 				$firstName = $at['first_name'];
-				if ($chief == $at['uid']) {
+				if ($chief == $at['uid'] && $caretaker == 1) {
 					$firstName .= ' (Leitung)';
 				}
 				$this->Cell(32,6,$firstName);
@@ -456,8 +532,6 @@ class myPDF extends PDF {
 	
 	}
 }
-if (defined('TYPO3_MODE') && $TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/partner/inc/class.tx_partner_format.php']) {
-	include_once($TYPO3_CONF_VARS[TYPO3_MODE]['XCLASS']['ext/partner/inc/class.tx_partner_format.php']);
-}
+
 
 ?>

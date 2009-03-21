@@ -194,11 +194,39 @@ class  tx_rtvacationcare_module2 extends t3lib_SCbase {
 #echo t3lib_div::debug($data,'');
 					switch((string)$this->MOD_SETTINGS['function'])	{
 						case 1:
+							// make Invoice ?
+							if ((int)$data['getInvoice'] > 0 && (int)$data['recipient'] > 0 ) {
+								// first let user choose name and checkbox for pictures
+								$vacation = t3lib_BEfunc::getRecord('tx_rtvacationcare_vacations', $data['getInvoice']);					
+								if ($pdfShowPictures != 1) $pdfShowPictures = 0;
+								if ($pdfShowInfo != 1) $pdfShowInfo = 0;
+									$pdfClass = t3lib_div::makeInstance('tx_rtvacationcare_pdfconf');
+									$makePdf = $pdfClass->formatInvoice($data['recipient'], $vacation);
+							}							
+							
 							// make pdf ?
 							if ((int)$data['getPdf'] > 0 ) {
+								// first let user choose name and checkbox for pictures
+								$nameForPdf = t3lib_div::_POST('nameForPdf');
+								$pdfShowPictures = t3lib_div::_POST('pdfShowPictures');
+								$pdfShowInfo = t3lib_div::_POST('pdfShowInfo');
+								$reallyMakePdfNow = (int)t3lib_div::_POST('reallyMakePdfNow');
 								$vacation = t3lib_BEfunc::getRecord('tx_rtvacationcare_vacations', $data['getPdf']);
-								$pdfClass = t3lib_div::makeInstance('tx_rtvacationcare_pdfconf');
-								$makePdf = $pdfClass->formatAsPDF($vacation);
+								$content .= '<h3>PDF erstellen für -'.$vacation['title'].'-</h3>';
+								$content .= '<label for="nameForPdf">Grüß Gott, </label><input type="text" name="nameForPdf" size="50" />.<br />';
+								$content .= '<input type="hidden" name="reallyMakePdfNow" value="1" />';
+								$content .= '<label for="pdfShowPictures">Bilder drucken?</label> <input type="checkbox" name="pdfShowPictures" value="1" /><br />';
+								$content .= '<label for="pdfShowInfo">Infotext drucken?</label> <input type="checkbox" name="pdfShowPictures" value="1" /><br />';
+								$content .= '<input type="submit" value="PDF jetzt erstellen" />';
+								$content .= $this->doc->spacer(5);
+								$content .= '<a href="index.php?SET[function]=1">Abbrechen</a>';
+								$content .= $this->doc->spacer(10);
+								if ($reallyMakePdfNow == 1) {					
+									if ($pdfShowPictures != 1) $pdfShowPictures = 0;
+									if ($pdfShowInfo != 1) $pdfShowInfo = 0;
+									$pdfClass = t3lib_div::makeInstance('tx_rtvacationcare_pdfconf');
+									$makePdf = $pdfClass->formatAsPDF($vacation, $nameForPdf, $pdfShowPictures, $pdfShowInfo);
+								}
 							}
 							// listview
 							
@@ -380,6 +408,8 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 						if ($theAttendee['user_attendeeaddress_c_invoice'] != '' ) {
 							$invoiceParam = '&edit[tt_address]['.$attendee['uid'].']=edit&columnsOnly=user_attendeeaddress_c_invoice';
 							$out.= '<a href="#" onclick="'.htmlspecialchars(t3lib_BEfunc::editOnClick($invoiceParam,$GLOBALS['BACK_PATH'])).'">>R<</a>';
+							// PDF link
+						$out .= ' <a href="index.php?SET[function]=1&SET[getInvoice]='.$vacId.'&SET[recipient]='.$editUid.'"><img'.t3lib_iconWorks::skinImg($GLOBALS['BACK_PATH'],'gfx/fileicons/pdf.gif','width="11" height="12"').' title="Bestätigung erstellen" border="0" alt="" /></a>';
 						}
 						$out.= '</td>';
 						// street

@@ -33,7 +33,7 @@ $LANG->includeLLFile('EXT:rt_vacationcare/mod3/locallang.xml');
 require_once(PATH_t3lib.'class.t3lib_scbase.php');
 $BE_USER->modAccess($MCONF,1);	// This checks permissions and exits if the users has no permission for entry.
 	// DEFAULT initialization of a module [END]
-$attendeeFields = 'gender,first_name,last_name,birthday,email,phone,address,zip,city,image,user_attendeeaddress_dossier,user_attendeeaddress_wheelchair,user_attendeeaddress_blind,user_attendeeaddress_specials,user_attendeeaddress_c_address,user_attendeeaddress_c_zip,user_attendeeaddress_c_city,user_attendeeaddress_c_phone,user_attendeeaddress_c_mobile,user_attendeeaddress_c_mail,user_attendeeaddress_c_name,user_attendeeaddress_c_relation,user_attendeeaddress_c_fax,user_attendeeaddress_c_invoice,user_attendeeaddress_c_invoice_address';
+$attendeeFields = 'gender,first_name,last_name,birthday,email,phone,address,zip,city,image,user_attendeeaddress_dossier,user_attendeeaddress_wheelchair,user_attendeeaddress_blind,user_attendeeaddress_specials,user_attendeeaddress_home,user_attendeeaddress_c_address,user_attendeeaddress_c_zip,user_attendeeaddress_c_city,user_attendeeaddress_c_phone,user_attendeeaddress_c_mobile,user_attendeeaddress_c_mail,user_attendeeaddress_c_name,user_attendeeaddress_c_relation,user_attendeeaddress_c_fax,user_attendeeaddress_c_invoice,user_attendeeaddress_c_invoice_address';
 
 
 /**
