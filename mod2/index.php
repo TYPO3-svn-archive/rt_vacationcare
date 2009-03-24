@@ -650,7 +650,7 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 							'cruser_id' => 1,
 							'nr' => $the_nr,
 							'crdate' => time(),
-							'tstamp'=>time()		
+						'tstamp'=>time()		
 						);
 						$go = $GLOBALS['TYPO3_DB']->exec_INSERTquery('tx_rtvacationcare_vacations',$insertArray);
 					}
@@ -694,7 +694,18 @@ echo t3lib_div::debug($vacId.' '.$delConf,'');
 						$LANG->getLL('fri'),
 						$LANG->getLL('sat'));
 					// listview table
-					$kcont .= '<h2>'.$vacationCount.' '.$LANG->getLL('title').' '.$LANG->getLL('for').' '.$activeYear.'</h2>';
+					// count all registrations
+					$allRegistrationsRes = $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query(
+						'COUNT(*) as amount',
+						'tx_rtvacationcare_regist',
+						'tx_rtvacationcare_regist_vacationid_mm',
+						'tx_rtvacationcare_vacations',
+						'AND FROM_UNIXTIME(tx_rtvacationcare_vacations.startdate, "%Y" ) = '.$activeYear
+					);
+					$numberOfRegistrationsRows = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($allRegistrationsRes);
+					$numberOfRegistrations = $numberOfRegistrationsRows['amount'];
+					
+					$kcont .= '<h2>'.$vacationCount.' '.$LANG->getLL('title').' '.$LANG->getLL('for').' '.$activeYear.' '.$LANG->getLL('and').' '.$numberOfRegistrations.' '.$LANG->getLL('registrations').'</h2>';
 					$kcont .= '<table style="padding:4px; margin: 2px;" width="760">';
 					// table header
 					$kcont .= '<tr style="font-weight: bold; background-color: #ccc"><td>'.$LANG->getLL('nr').'</td><td>'.$LANG->getLL('title').'</td><td>'.$LANG->getLL('date').'</td><td>'.$LANG->getLL('confirmed').'</td><td>'.$LANG->getLL('booked').'</td><td>'.$LANG->getLL('attendees').'</td><td>'.$LANG->getLL('caretakers').'</td><td>'.$LANG->getLL('quickview').'</td><td>Infofeld</td><td>'.$LANG->getLL('edit').'</td></tr>';

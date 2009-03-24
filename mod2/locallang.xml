@@ -22,6 +22,8 @@
 			<label index="chooseYear">aktives Jahr:</label>
 			<label index="noVacations">Keine Freizeiten für dieses Jahr gespeichert!</label>
 			<label index="createVacation"> neue Freizeit anlegen</label>
+			<label index="and">und</label>
+			<label index="registrations">Anmeldungen</label>
 			<!-- Weekdays -->
 			<label index="sun">Sonntag</label>
 			<label index="mon">Montag</label>

@@ -289,7 +289,7 @@ $TCA["tx_rtvacationcare_vacations"] = array (
 		),
 		"caretakerwish" => Array (		
 			"exclude" => 1,		
-			"label" => "LLL:EXT:rt_vacationcare/locallang_db.xml:tx_rtvacationcare_vacations.caretakerwish",		
+			"label" => "LLL:EXT:rt_vacationcare/locallang_db.xml:tx_rtvacationcare_vacations.caretakerwish",
 			"config" => Array (
 				"type" => "select",	
 				"foreign_table" => "fe_users",	

@@ -13,10 +13,12 @@
 			<label index="title">Teilnehmer</label>
 			<label index="createCaretaker"> Teilnehmer anlegen</label>
 			<label index="titleSingular">Teilnehmer</label>
-			<label index="edit">beareiten</label>
+			<label index="edit">bearbeiten</label>
 			<!-- attendee-list -->
 			<label index="nameFirstname">Name, Vorname</label>
 			<label index="altR">R</label>
+			<label index="fzList">FZ-Liste</label>
+			<label index="make">erstellen</label>
 			<label index="street">Strasse</label>
 			<label index="zipCity">PLZ, Ort</label>
 			<label index="birthday">Geburtstag</label>

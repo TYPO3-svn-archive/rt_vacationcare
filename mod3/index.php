@@ -174,6 +174,10 @@ class  tx_rtvacationcare_module3 extends t3lib_SCbase {
 
 					switch((string)$this->MOD_SETTINGS['function'])	{
 						case 1:
+							if ($fzAttendeeList > 0 ) {
+								// make Attendee's vacationlist
+								
+							}
 							$content .= $this->showAttendees();
 							$this->content.=$this->doc->section('',$content,0,1);
 						break;
@@ -297,7 +301,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 					$out .= '<h2 id="top">'.$LANG->getLL('title').' ('.$attendeeCount['anzahl'].')</h2>';
 					$out .= '<table style="padding:4px; margin: 2px;" width="90%	">';
 					// table header
-					$out .= '<tr style="font-weight: bold; background-color: #ccc"><td>'.$LANG->getLL('nameFirstname').'</td><td style="text-align:center;">'.$LANG->getLL('altR').'</td><td>'.$LANG->getLL('street').'</td><td>'.$LANG->getLL('zipCity').'</td><td>'.$LANG->getLL('birthday').'</td><td>'.$LANG->getLL('phone').'</td><td>'.$LANG->getLL('wheelchair').'</td><td></td></tr>';
+					$out .= '<tr style="font-weight: bold; background-color: #ccc"><td>'.$LANG->getLL('nameFirstname').'</td><td>'.$LANG->getLL('fzList').'</td><td style="text-align:center;">'.$LANG->getLL('altR').'</td><td>'.$LANG->getLL('street').'</td><td>'.$LANG->getLL('zipCity').'</td><td>'.$LANG->getLL('birthday').'</td><td>'.$LANG->getLL('phone').'</td><td>'.$LANG->getLL('wheelchair').'</td><td></td></tr>';
 					$counter = 0;
 					while($theAttendee = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($attendeesRes)) {
 						// init edit options
@@ -313,6 +317,12 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 						$out .='>';
 						// name
 						$out .= '<td><a href="#" onclick="'.htmlspecialchars(t3lib_BEfunc::editOnClick($params,$GLOBALS['BACK_PATH'])).'">'.$theAttendee['first_name'].', '.$theAttendee['last_name'].'</a></td>';
+						
+						// link to "show all vacations of this attendee"
+						$out .= '<td>';
+						$out .= '<a href="index.php?SET[function]=1&SET[fzListAttendee]='.$editUid.'">'.$LANG->getLL('make').'</a>';
+						$out .= '</td>';
+						
 						// altR
 						$out .= '<td style="text-align: center;">';
 						if ($theAttendee['user_attendeeaddress_c_invoice'] != '' ) {
