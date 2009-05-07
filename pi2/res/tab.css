@@ -1,0 +1,33 @@
+@charset "utf-8";
+
+
+#menu ul{
+	list-style:none;
+}
+#menu ul#tabs1 li{
+	display:inline;	
+	background:#fff;
+	height:28px;
+	margin:0 5px 0 0 ;
+	border:1px solid #999;
+	border-bottom:2px solid #eee;
+	float:left;
+	padding:1px 1px 0 1px
+}
+ul#tabs1 li a{
+	display:block;
+	float:left;
+	background:#eee;
+	height:100%;
+	line-height:2;
+	padding:0 10px 0 10px;
+	cursor:pointer;
+}
+ul#tabs1 li a:hover{
+	background:#D7D7D7;
+	color:#fff;
+}
+
+#tabs1content {
+	margin: 40px 0 0 0;
+}
