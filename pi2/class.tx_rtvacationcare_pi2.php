@@ -208,7 +208,16 @@ Deine Begründung:
 
 		
 		$content .= '<div id="startTab" class="ui-tabs-hide">'.$this->startTab().'</div><div id="manageProfile" class="ui-tabs-hide">'.$this->manageProfileForm($realUser).'</div>
-		<div id="allVacations" class="ui-tabs-hide">'.$this->showVacations($realUser['uid']).'</div>
+		<div id="allVacations" class="ui-tabs-hide">';
+		# allVacations
+		if ($this->piVars['attendeeList'] && (int)$this->piVars['attendeeList'] > 0 ) {
+			$content .= $this->getAttendeeList($this->piVars['attendeeList']);
+		} else {
+			# show normal list of vacations
+			$content .= $this->showVacations($realUser['uid']);
+		}
+		
+		$content .= '</div>
 		<div id="myVacations" class="ui-tabs-hide">'.$this->showMyVacations($realUser['uid'], $feUser).'</div>';
 		$content_conf = array(
 		    'tables' => 'tt_content',
@@ -575,6 +584,20 @@ Deine Begründung:
 				if ($planedCaretakers <= 0) $planedCaretakers = 0;
 				$out .= $planedCaretakers;
 			}
+			# link to attendeeList
+			$conf = array(
+			  // Link to current page
+			  'parameter' => $GLOBALS['TSFE']->id.'#allVacations',
+			  // Set additional parameters
+			  'additionalParams' => '&tx_rtvacationcare_pi2[attendeeList]=' . $allVacations['uid'],
+			  // We must add cHash because we use parameters
+			  'useCacheHash' => true,
+			  // We want link only
+			  'returnLast' => 'url',
+			);
+			$attendeeListUrl = $this->cObj->typoLink('', $conf);			
+			
+			$out .= ' <a href="'.$attendeeListUrl.'">(Liste)</a>';
 			$out .= '</td>';
 			
 			// link to make wish
@@ -724,6 +747,107 @@ function changeForm (vTitle, vacId) {
 		$url = $this->cObj->typoLink('', $conf);
 		$out .= '<p><a href="'.$url.'">'.$nextVac['title'].'<br />'.date('d.m.Y', $nextVac['startdate']).' bis '.date('d.m.Y', $nextVac['enddate']).'</a></p>';
 		$out .= '</div>';
+		return $out;
+	}
+	
+	protected function getAttendeeList($v_id) {
+		$out = '';
+		$conf = array(
+		  // Link to current page
+		  'parameter' => $GLOBALS['TSFE']->id.'#allVacations',
+		  // Set additional parameters
+		  'additionalParams' => '',
+		  // We must add cHash because we use parameters
+		  'useCacheHash' => true,
+		  // We want link only
+		  'returnLast' => 'url',
+		);
+		$backUrl = $this->cObj->typoLink('', $conf);
+		$backLink = '<a href="'.$backUrl.'">'.$this->pi_getLL('backToVacations').'</a>';
+		
+		# get data of vacation
+		$vacation = $this->pi_getRecord('tx_rtvacationcare_vacations', $v_id);
+		$out .= '<h2>'.$vacation['title'].' - '.$this->pi_getLL('attendee').' & '.$this->pi_getLL('caretaker').'</h2>';
+		$out .= $backLink;
+		$out .= '<h3>'.$this->pi_getLL('attendee').'</h3>';
+		# get all attendees for this vacation
+		// first get registrations for this vacation
+		$registrationRes = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+			'uid_local as reg_uid', #SELECT
+			'tx_rtvacationcare_regist_vacationid_mm',
+			'uid_foreign = "'.$v_id.'" ');
+		
+		$registeredAttendees = array();
+		// then get attendee to this registration
+		while ($registrations = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($registrationRes) ) {
+			$attendeeRes = $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query(
+			'tt_address.first_name as a_fname, tt_address.last_name as a_lname, tt_address.uid as a_uid', #SELECT
+			'tx_rtvacationcare_regist',
+			'tx_rtvacationcare_regist_attendeeid_mm',
+			'tt_address',
+			'AND tx_rtvacationcare_regist_attendeeid_mm.uid_local = "'.$registrations['reg_uid'].'" ');
+			$attendee = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($attendeeRes);
+			$registeredAttendees[]= array('uid' => $attendee['a_uid'], 'first_name' => $attendee['a_fname'], 'last_name' => $attendee['a_lname'], 'reg_uid' => $registrations['reg_uid']);
+		}
+		$out .= '<ul>';
+		foreach($registeredAttendees as $attendee) {
+			// get all data from attendee
+			$theAttendee = t3lib_BEfunc::getRecord('tt_address',$attendee['uid']);
+			// init edit options
+			$editUid = $attendee['uid'];
+
+			// name
+			$out .= '<li>'.$attendee['first_name'].' '.$attendee['last_name'].'</li>';
+		}
+		$out .= '</ul>';
+		
+		# caretaker for this vacation
+		$out .= '<h3>'.$this->pi_getLL('caretaker').'</h3>';
+		$caretakerRes = $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query(
+			'tt_address.first_name as c_firstname, tt_address.last_name as c_lastname, tt_address.uid as c_uid', #SELECT
+			'tx_rtvacationcare_vacations', # local table
+			'tx_rtvacationcare_vacations_caretaker_mm', # mm table
+			'tt_address', #foreign
+			' AND uid_local = "'.$v_id.'" ',
+			'',# group by
+			'tt_address.first_name',
+		300);
+		# get chief for this vacations
+		$chiefRes = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
+			'uid_foreign as uid',
+			'tx_rtvacationcare_vacations_caretakerchief_mm',
+			'uid_local = '.$v_id);
+		$chief = 0;
+		if ($chiefRes) {
+			$chief = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($chiefRes);
+			$chief = $chief['uid'];
+		}
+		
+		$out .= '<ul>';
+		while($caretakerRow = $GLOBALS['TYPO3_DB']->sql_fetch_assoc($caretakerRes)){
+			$out .= '<li';
+			if ($chief == $caretakerRow['c_uid']) $out .= ' style="font-weight: bold;"';
+			$out .= '>';
+			# image link			
+			$imgTooltip = array();
+			$imgTooltip = $this->conf['imageTooltip.'];
+			# get tt_address data of this caretaker
+			$caretakerAddress = $this->pi_getRecord('tt_address', $caretakerRow['c_uid']);
+#echo t3lib_div::debug($caretakerAddress,'');
+			if ($caretakerAddress['image'] == '' ) {
+				$imgTooltip['file'] = PATH_site.'/typo3conf/ext/rt_vacationcare/pi2/res/images/pippi.jpg';
+			} else {
+				$imgTooltip['file'] = 'uploads/pics/'.$caretakerAddress['image'];
+			} 
+			
+			$out .= '<a rel="'.$this->cObj->IMG_RESOURCE($imgTooltip).'"  class="preview">';
+		
+			$out .= $caretakerRow['c_firstname'].' '.$caretakerRow['c_lastname'].'</a></li>';
+		}
+		$out .= '</ul>';
+		#create list of all Attendees
+		
+		$out .= $backLink;
 		return $out;
 	}
 	

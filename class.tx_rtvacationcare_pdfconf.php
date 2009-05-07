@@ -164,11 +164,12 @@ class tx_rtvacationcare_pdfconf   {
 	    $pdf->Cell(40,5, utf8_decode('Bitte geben Sie dem Verantwortlichen der Freizeit:'));
 		$pdf->Ln(5);
 		$pdf->Cell(10,5);
-		$pdf->Cell(40,5, utf8_decode('- Das Medikamentenkästchen mit den genauen Angaben für jeden Tag (bitte schon vorstellen)'));
-	    $pdf->Ln(5);
+		$pdf->SetFont('Arial','',9);
+		$pdf->MultiCell(0,5, utf8_decode('- Das Medikamentenkästchen mit den genauen Angaben für jeden Tag (bitte schon vorstellen). Alle Tabletten bitte in das Medikamtentenkästchen vollständig einsortieren! Ersatzmedizin bitte für einen Tag und eine Nacht mitgeben!'));
+	    //$pdf->Ln(5);
 		$pdf->Cell(10,5);
 		$pdf->Cell(40,5, utf8_decode('- Taschengeld (ca. '.$vacation['pocketmoney'].' EUR in einem eigenen, beschrifteten Geldbeutel)'));
-		
+		$pdf->SetFont('Arial','',10);
 		// snack
 		if ($vacation['snack'] == 1) {
 			$pdf->Ln(8);

@@ -176,7 +176,6 @@ class  tx_rtvacationcare_module3 extends t3lib_SCbase {
 						case 1:
 							if ($fzAttendeeList > 0 ) {
 								// make Attendee's vacationlist
-								
 							}
 							$content .= $this->showAttendees();
 							$this->content.=$this->doc->section('',$content,0,1);
@@ -239,7 +238,7 @@ $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 						'tt_address',
 						'pid = '.$attendeePid.t3lib_BEfunc::deleteClause('tt_address'),
 						'',
-						'last_name');
+						'first_name, last_name');
 						
 					$editTable = 'tt_address';
 					$params = '&edit['.$editTable.']['.$attendeePid.']=new&columnsOnly='.$attendeeFields;
@@ -309,7 +308,7 @@ function MM_jumpMenu(targ,selObj,restore){ //v3.0
 						$params='&edit['.$editTable.']['.$editUid.']=edit&columnsOnly='.$attendeeFields;
 						$out .= '<tr';
 						# anker for jumpmenue
-						$letter = substr($theAttendee['last_name'] , 0, 1);
+						$letter = substr($theAttendee['first_name'] , 0, 1);
 						if ($$letter != "1") {
 							$$letter = "1";
 							$out .= ' id="'.$letter.'"';

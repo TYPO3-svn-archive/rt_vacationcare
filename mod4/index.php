@@ -221,7 +221,7 @@ class  tx_rtvacationcare_module4 extends t3lib_SCbase {
 						'tt_address',
 						'pid = '.$caretakerPid.t3lib_BEfunc::deleteClause('tt_address'),
 						'',
-						'last_name, first_name');
+						'first_name, last_name');
 						
 					$editTable = 'tt_address';
 					$params = '&edit['.$editTable.']['.$caretakerPid.']=new&columnsOnly='.$caretakerFields;
@@ -318,7 +318,7 @@ $res = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 						// name
 						$out .= '<tr';
 						# anker for jumpmenue
-						$letter = substr($theCaretaker['last_name'] , 0, 1);
+						$letter = substr($theCaretaker['first_name'] , 0, 1);
 						if ($$letter != "1") {
 							$$letter = "1";
 							$out .= ' id="'.$letter.'"';
