@@ -151,7 +151,7 @@ Seine Begründung:
 			$mail->useQuotedPrintable();
 			$mail->returnPath = $mail->from_email = $mail->replyto_email = $realUser['email'];
 			$mail->from_name = $mail->replyto_name = $realUser['name'];
-			$mail->recipient = '"'.addslashes('Christian Balzer').'" <s.voelker@redukt.de>';
+			$mail->recipient = '"'.addslashes('Christian Balzer').'" <info@kunterbunt-reisen.de>';
 			$mail->subject = $realUser['name'].' kann nicht betreuen: '.$vacation['title'];
 			$mail->addPlain($message);
 			$result = $mail->send('');
@@ -210,15 +210,26 @@ Deine Begründung:
 		$content .= '<div id="startTab" class="ui-tabs-hide">'.$this->startTab().'</div><div id="manageProfile" class="ui-tabs-hide">'.$this->manageProfileForm($realUser).'</div>
 		<div id="allVacations" class="ui-tabs-hide">';
 		# allVacations
-		if ($this->piVars['attendeeList'] && (int)$this->piVars['attendeeList'] > 0 ) {
-			$content .= $this->getAttendeeList($this->piVars['attendeeList']);
+		if ($this->piVars['attendeeList'] && (int)$this->piVars['attendeeList'] > 0 && (int)$this->piVars['allPage'] == 1 ) {
+			$content .= $this->getAttendeeList($this->piVars['attendeeList'],0);
 		} else {
 			# show normal list of vacations
 			$content .= $this->showVacations($realUser['uid']);
 		}
 		
-		$content .= '</div>
-		<div id="myVacations" class="ui-tabs-hide">'.$this->showMyVacations($realUser['uid'], $feUser).'</div>';
+		$content .= '</div>';
+		# myVacations
+		$content .= '<div id="myVacations" class="ui-tabs-hide">';
+		if ((int)$this->piVars['attendeeList'] > 0 && (int)$this->piVars['myPage'] == 1 ) {
+			$content .= $this->getAttendeeList($this->piVars['attendeeList'],1);
+		} else if ((int)$this->piVars['backPage'] == 1 && (int)$this->piVars['getAttendeeData'] > 0) {
+			# show attendee data
+			$content .= $this->showAttendeeData($this->piVars['getAttendeeData'],$this->piVars['backPage'],(int)$this->piVars['v_id']);
+		} else {
+			# show normal list of vacations
+			$content .= $this->showMyVacations($realUser['uid'], $feUser);
+		}		
+		$content .= '</div>';
 		$content_conf = array(
 		    'tables' => 'tt_content',
 		    'source' => 1,
@@ -589,7 +600,7 @@ Deine Begründung:
 			  // Link to current page
 			  'parameter' => $GLOBALS['TSFE']->id.'#allVacations',
 			  // Set additional parameters
-			  'additionalParams' => '&tx_rtvacationcare_pi2[attendeeList]=' . $allVacations['uid'],
+			  'additionalParams' => '&tx_rtvacationcare_pi2[attendeeList]=' . $allVacations['uid'].'&tx_rtvacationcare_pi2[allPage]=1&tx_rtvacationcare_pi2[myPage]=0',
 			  // We must add cHash because we use parameters
 			  'useCacheHash' => true,
 			  // We want link only
@@ -597,7 +608,7 @@ Deine Begründung:
 			);
 			$attendeeListUrl = $this->cObj->typoLink('', $conf);			
 			
-			$out .= ' <a href="'.$attendeeListUrl.'">(Liste)</a>';
+			$out .= ' <a href="'.$attendeeListUrl.'"> (Gruppe)</a>';
 			$out .= '</td>';
 			
 			// link to make wish
@@ -668,7 +679,24 @@ Deine Begründung:
 			
 			// link to make wish
 			$fe_userId = $GLOBALS['TSFE']->fe_user->user['uid'];
-			$out .= '<td>'.$this->checkStatus($userId, $fe_userId, $allVacations['uid'], 0).'</td>';
+			$out .= '<td>'.$this->checkStatus($userId, $fe_userId, $allVacations['uid'], 0);
+			
+			# link to attendeeList
+			$conf = array(
+			  // Link to current page
+			  'parameter' => $GLOBALS['TSFE']->id.'#myVacations',
+			  // Set additional parameters
+			  'additionalParams' => '&tx_rtvacationcare_pi2[attendeeList]=' . $allVacations['uid'].'&tx_rtvacationcare_pi2[allPage]=0&tx_rtvacationcare_pi2[myPage]=1',
+			  // We must add cHash because we use parameters
+			  'useCacheHash' => true,
+			  // We want link only
+			  'returnLast' => 'url',
+			);
+			$attendeeListUrl = $this->cObj->typoLink('', $conf);			
+			
+			$out .= ' <a href="'.$attendeeListUrl.'"> (Gruppe)</a>';
+			
+			$out .='</td>';
 			
 			// download confirmation
 			$conf = array(
@@ -750,11 +778,27 @@ function changeForm (vTitle, vacId) {
 		return $out;
 	}
 	
-	protected function getAttendeeList($v_id) {
+	protected function getAttendeeList($v_id, $backPage) {
 		$out = '';
+		# check rights
+#echo t3lib_div::debug($GLOBALS['TSFE']->fe_user->user,'');
+		$userGroups = $GLOBALS['TSFE']->fe_user->user['usergroup'];
+		$userGroups = explode(',',$userGroups);
+		if (in_array(2,$userGroups)) {
+			# user is in group "Kernbetreuer"
+			$coreKey = 1;
+		} else {
+			$coreKey = 0;
+		}
+		#
+		if ((int)$backPage == 1) {
+			$backToPage = '#myVacations';
+		} else {
+			$backToPage = '#allVacations';
+		}
 		$conf = array(
 		  // Link to current page
-		  'parameter' => $GLOBALS['TSFE']->id.'#allVacations',
+		  'parameter' => $GLOBALS['TSFE']->id.$backToPage,
 		  // Set additional parameters
 		  'additionalParams' => '',
 		  // We must add cHash because we use parameters
@@ -769,6 +813,7 @@ function changeForm (vTitle, vacId) {
 		$vacation = $this->pi_getRecord('tx_rtvacationcare_vacations', $v_id);
 		$out .= '<h2>'.$vacation['title'].' - '.$this->pi_getLL('attendee').' & '.$this->pi_getLL('caretaker').'</h2>';
 		$out .= $backLink;
+		$out .= '<div  class="attendeeList">';
 		$out .= '<h3>'.$this->pi_getLL('attendee').'</h3>';
 		# get all attendees for this vacation
 		// first get registrations for this vacation
@@ -795,13 +840,43 @@ function changeForm (vTitle, vacId) {
 			$theAttendee = t3lib_BEfunc::getRecord('tt_address',$attendee['uid']);
 			// init edit options
 			$editUid = $attendee['uid'];
+			
+			# image link			
+			$imgTooltipAttendee = array();
+			$imgTooltipAttendee = $this->conf['imageTooltip.'];
 
+#echo t3lib_div::debug($caretakerAddress,'');
+			if ($theAttendee['image'] == '' ) {
+				$imgTooltipAttendee['file'] = $this->path.'pi2/res/images/pippi.jpg';
+			} else {
+				$imgTooltipAttendee['file'] = 'uploads/pics/'.$theAttendee['image'];
+			} 
+			$out .= '<li>';
+			# link for data of attendee (only for coremembers)
+			$conf = array(
+			  // Link to current page
+			  'parameter' => $GLOBALS['TSFE']->id.$backToPage,
+			  // Set additional parameters
+			  'additionalParams' => '&tx_rtvacationcare_pi2[getAttendeeData]=' . $editUid.'&tx_rtvacationcare_pi2[backPage]='.$backPage.'&tx_rtvacationcare_pi2[v_id]='.$v_id,
+			  // We must add cHash because we use parameters
+			  'useCacheHash' => true,
+			  // We want link only
+			  'returnLast' => 'url',
+			);
+			
+			$out .= '<a';
+			if ($coreKey == 1) {
+				$dataUrl = $this->cObj->typoLink('', $conf);
+				$out .= ' href="'.$dataUrl.'" ';
+			}		
+			$out .= ' rel="'.$this->cObj->IMG_RESOURCE($imgTooltipAttendee).'"  class="preview" title="'.$theAttendee['first_name'].' '.$theAttendee['last_name'].'">';
 			// name
-			$out .= '<li>'.$attendee['first_name'].' '.$attendee['last_name'].'</li>';
+			$out .= $attendee['first_name'].' '.$attendee['last_name'].'</a></li>';
 		}
-		$out .= '</ul>';
+		$out .= '</ul></div>';
 		
 		# caretaker for this vacation
+		$out .= '<div  class="attendeeList">';
 		$out .= '<h3>'.$this->pi_getLL('caretaker').'</h3>';
 		$caretakerRes = $GLOBALS['TYPO3_DB']->exec_SELECT_mm_query(
 			'tt_address.first_name as c_firstname, tt_address.last_name as c_lastname, tt_address.uid as c_uid', #SELECT
@@ -829,24 +904,61 @@ function changeForm (vTitle, vacId) {
 			if ($chief == $caretakerRow['c_uid']) $out .= ' style="font-weight: bold;"';
 			$out .= '>';
 			# image link			
-			$imgTooltip = array();
-			$imgTooltip = $this->conf['imageTooltip.'];
+			$imgTooltipCaretaker = array();
+			$imgTooltipCaretaker = $this->conf['imageTooltip.'];
 			# get tt_address data of this caretaker
 			$caretakerAddress = $this->pi_getRecord('tt_address', $caretakerRow['c_uid']);
 #echo t3lib_div::debug($caretakerAddress,'');
 			if ($caretakerAddress['image'] == '' ) {
-				$imgTooltip['file'] = PATH_site.'/typo3conf/ext/rt_vacationcare/pi2/res/images/pippi.jpg';
+				$imgTooltipCaretaker['file'] = $this->path.'pi2/res/images/pippi.jpg';
 			} else {
-				$imgTooltip['file'] = 'uploads/pics/'.$caretakerAddress['image'];
+				$imgTooltipCaretaker['file'] = 'uploads/pics/'.$caretakerAddress['image'];
 			} 
 			
-			$out .= '<a rel="'.$this->cObj->IMG_RESOURCE($imgTooltip).'"  class="preview">';
+			$out .= '<a rel="'.$this->cObj->IMG_RESOURCE($imgTooltipCaretaker).'"  class="preview" title="'.$caretakerAddress['first_name'].' '.$caretakerAddress['last_name'].'">';
 		
 			$out .= $caretakerRow['c_firstname'].' '.$caretakerRow['c_lastname'].'</a></li>';
 		}
-		$out .= '</ul>';
+		$out .= '</ul></div>';
 		#create list of all Attendees
+		$out .= '<div style="clear:both">&nbsp;</div>';
+		$out .= $backLink;
+		return $out;
+	}
+	
+	protected function showAttendeeData($a_id, $backPage, $v_id) {
+		$out = '';
+		# backlink
+				$conf = array(
+		  // Link to current page
+		  'parameter' => $GLOBALS['TSFE']->id.'#myVacations',
+		  // Set additional parameters
+		  'additionalParams' => '&tx_rtvacationcare_pi2[attendeeList]=' . $v_id.'&tx_rtvacationcare_pi2[allPage]=0&tx_rtvacationcare_pi2[myPage]=1',
+		  // We must add cHash because we use parameters
+		  'useCacheHash' => true,
+		  // We want link only
+		  'returnLast' => 'url',
+		);
+		$backUrl = $this->cObj->typoLink('', $conf);
+		$backLink = '<a href="'.$backUrl.'">'.$this->pi_getLL('backToVacation').'</a>';
 		
+		
+		$theAttendee = t3lib_BEfunc::getRecord('tt_address',$a_id);
+		$out .= '<h3>'.$theAttendee['first_name'].' '.$theAttendee['last_name'].'</h3>';
+		$out .= '<table width="350"><tr>';
+		$out .= '<tr><td>Adresse:</td><td>'.$theAttendee['address'].'</td></tr>';
+		$out .= '<tr><td>PLZ:</td><td>'.$theAttendee['zip'].'</td></tr>';
+		$out .= '<tr><td>Ort:</td><td>'.$theAttendee['city'].'</td></tr>';
+		$out .= '<tr><td>Geburtstag:</td><td>'.date('d.m.Y', $theAttendee['birthday']).'</td></tr>';
+		$out .= '<tr><td>Telefon:</td><td>'.$theAttendee['phone'].'</td></tr>';
+		$out .= '<tr><td>Besonderheiten:</td><td>'.$theAttendee[''].'</td></tr>';
+		
+		$out .= '<tr><td>Handycap:</td><td>'.$theAttendee[''].'</td></tr>';
+		$out .= '<tr><td>Heim:</td><td>'.$theAttendee[''].'</td></tr>';
+		$out .= '<tr><td>Ansprechpartner:</td><td>'.$theAttendee[''].'</td></tr>';
+		$out .= '<tr><td>Notizen:</td><td>'.$theAttendee[''].'</td></tr>';
+		$out .= '</table>';
+		$out .= '<div style="clear:both">&nbsp;</div>';
 		$out .= $backLink;
 		return $out;
 	}

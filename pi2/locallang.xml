@@ -22,6 +22,7 @@
 			<label index="justConfirmedLinkText">Möchtest du bei dieser Freizeit nicht betreuen ?</label>
 			<label index="widget.nextvacation.header">Meine nächste Freizeit:</label>
 			<label index="backToVacations">zu den Freizeiten zurück</label>
+			<label index="backToVacation">zur Freizeit zurück</label>
 			
 			<label index="caretaker">Betreuer</label>
 			<label index="attendee">Teilnehmer</label>

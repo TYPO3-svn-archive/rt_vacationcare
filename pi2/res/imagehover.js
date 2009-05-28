@@ -44,9 +44,9 @@ this.imagePreview = function(){
 		}
 		// correction of preview top/bottom
 		if (e.pageY >= middleY) {
-			xOffset = 250;
+			xOffset = 20;
 		} else {
-			xOffset = -40;
+			xOffset = -10;
 		}
 		$("body").append("<p id='preview'><img src='"+ this.rel+"' alt='Image preview' />"+ c +"</p>");
 		$("#preview")
