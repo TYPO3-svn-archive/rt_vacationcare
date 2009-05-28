@@ -1,0 +1,5 @@
+.attendeeList, .caretakerList {
+	float: left;
+	margin: 10px 20px;
+	width: 230px;
+}
