@@ -506,8 +506,19 @@ class myPDF extends PDF {
 					$firstName .= ' (Leitung)';
 				}
 				$this->Cell(32,6,$firstName);
-				$this->Cell(32,6,$at['address']);
-				$this->Cell(32,6,$at['zip'].' '.$at['city']);
+				
+				$theAddress= $at['address'];
+				if (strlen($theAddress) >= 16) {
+					$theAddress = substr($theAddress,0,16);
+				}
+				$this->Cell(32,6,$theAddress);
+				
+				$theCity = $at['zip'];
+				if (strlen($theCity) >= 18) {
+					$theCity = substr($theCity,0,18);
+				}
+				$this->Cell(32,6,$theCity);
+				
 				$this->Cell(32,6,$at['phone']);
 				// birthday...
 				$birthday = date('d.m', $at['birthday']);
