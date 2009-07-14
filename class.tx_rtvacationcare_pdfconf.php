@@ -235,7 +235,7 @@ class tx_rtvacationcare_pdfconf   {
 		}
 		
 		// table attendees
-		$tableHeader = array('Name:', 'Vorname:', 'Strasse:', 'PLZ, Ort:', 'Telefon:', 'Geburtstag:');
+		$tableHeader = array('Name:', 'Vorname:', 'Strasse:', 'PLZ, Ort:', 'Telefon:');
 		$pdf->peopleTable($tableHeader, $attendees, $vacation, 0);
 		
 		// graphical header 2
@@ -500,27 +500,32 @@ class myPDF extends PDF {
 		if (is_array($data)) {
 			foreach ($data as $at) {
 				$this->SetTextColor(0,0,0);
-				$this->Cell(32,6,$at['last_name']);
-				$firstName = $at['first_name'];
 				if ($chief == $at['uid'] && $caretaker == 1) {
-					$firstName .= ' (Leitung)';
+					$this->SetFont('Arial','B');
 				}
-				$this->Cell(32,6,$firstName);
+				$this->Cell(26,6,$at['last_name']);
+				$firstName = $at['first_name'];
+				$this->Cell(20,6,$firstName);
+				if ($chief == $at['uid'] && $caretaker == 1) {
+					$this->SetFont('Arial','');
+				}
 				
 				$theAddress= $at['address'];
 				if (strlen($theAddress) >= 16) {
-					$theAddress = substr($theAddress,0,16);
+					#$theAddress = substr($theAddress,0,16);
 				}
-				$this->Cell(32,6,$theAddress);
+				$this->Cell(55,6,$theAddress);
 				
 				$theCity = $at['zip'];
 				if (strlen($theCity) >= 18) {
-					$theCity = substr($theCity,0,18);
+					#$theCity = substr($theCity,0,18);
 				}
-				$this->Cell(32,6,$theCity);
+				$this->Cell(40,6,$theCity);
 				
 				$this->Cell(32,6,$at['phone']);
-				// birthday...
+				// birthday... no in new function... 14.07.09
+								
+/*
 				$birthday = date('d.m', $at['birthday']);
 				$geb = explode(".",$birthday);  // Das Datum des Geburtstages wird aufgeteilt
 	
@@ -534,6 +539,7 @@ class myPDF extends PDF {
 		    			$this->Image($candleImage,$posX,$posY,5,0);
 					}
 				}
+*/
 				
 				$this->Ln();
 				$posY = $this->GetY();
@@ -541,7 +547,11 @@ class myPDF extends PDF {
 			}		
 		}
 
-	
+	}
+
+	function birthdayTable($birthdates) {
+		$bt = '';
+		return $bt;
 	}
 }
 
