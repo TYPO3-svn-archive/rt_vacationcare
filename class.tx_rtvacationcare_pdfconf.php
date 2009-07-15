@@ -478,8 +478,11 @@ class myPDF extends PDF {
 		$this->SetFontSize('9');
 		$this->SetTextColor(0,200,0);
 		//Header
+		$headerSize = array('26','20','55','50','32');
+		$counter = 0;
     	foreach($header as $col) {
-	        $this->Cell(32,7,$col);
+	        $this->Cell($headerSize[$counter],7,$col);
+	        $counter++;
     	}
     	$this->Ln();
     	$this->SetDrawColor(0, 200, 0); // green
@@ -506,9 +509,9 @@ class myPDF extends PDF {
 				if ($chief == $at['uid'] && $caretaker == 1) {
 					$this->SetFont('Arial','B');
 				}
-				$this->Cell(26,6,$at['last_name']);
+				$this->Cell($headerSize[0],6,$at['last_name']);
 				$firstName = $at['first_name'];
-				$this->Cell(20,6,$firstName);
+				$this->Cell($headerSize[1],6,$firstName);
 				if ($chief == $at['uid'] && $caretaker == 1) {
 					$this->SetFont('Arial','');
 				}
@@ -517,32 +520,15 @@ class myPDF extends PDF {
 				if (strlen($theAddress) >= 16) {
 					#$theAddress = substr($theAddress,0,16);
 				}
-				$this->Cell(55,6,$theAddress);
+				$this->Cell($headerSize[2],6,$theAddress);
 				
 				$theCity = $at['zip'];
 				if (strlen($theCity) >= 18) {
 					#$theCity = substr($theCity,0,18);
 				}
-				$this->Cell(40,6,$theCity);
+				$this->Cell($headerSize[3],6,$theCity);
 				
-				$this->Cell(32,6,$at['phone']);
-				// birthday... now in new function birthdayInfos()... 14.07.09
-								
-/*
-				$birthday = date('d.m', $at['birthday']);
-				$geb = explode(".",$birthday);  // Das Datum des Geburtstages wird aufgeteilt
-	
-				$duration = ($vacation['enddate']-$vacation['startdate'])/86400;
-				for ($i = 0; $i <= $duration; $i++) {
-					$today = date('d.m',mktime(0,0,0,date('m', $vacation['startdate']),date('d', $vacation['startdate'])+$i, date('Y', $vacation['startdate'])));
-					if ($birthday == $today) {
-						$this->Cell(32,6,date('d.m.Y', $at['birthday']));
-						$posY = $this->GetY();
-		    			$posX = $this->GetX();
-		    			$this->Image($candleImage,$posX,$posY,5,0);
-					}
-				}
-*/
+				$this->Cell($headerSize[4],6,$at['phone']);
 				
 				$this->Ln();
 				$posY = $this->GetY();
