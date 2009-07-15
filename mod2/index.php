@@ -210,13 +210,15 @@ class  tx_rtvacationcare_module2 extends t3lib_SCbase {
 								$nameForPdf = t3lib_div::_POST('nameForPdf');
 								$pdfShowPictures = t3lib_div::_POST('pdfShowPictures');
 								$pdfShowInfo = t3lib_div::_POST('pdfShowInfo');
+								$pdfShowBirthdays = t3lib_div::_POST('pdfShowBirthdays');
 								$reallyMakePdfNow = (int)t3lib_div::_POST('reallyMakePdfNow');
 								$vacation = t3lib_BEfunc::getRecord('tx_rtvacationcare_vacations', $data['getPdf']);
 								$content .= '<h3>PDF erstellen für -'.$vacation['title'].'-</h3>';
 								$content .= '<label for="nameForPdf">Grüß Gott, </label><input type="text" name="nameForPdf" size="50" />.<br />';
 								$content .= '<input type="hidden" name="reallyMakePdfNow" value="1" />';
 								$content .= '<label for="pdfShowPictures">Bilder drucken?</label> <input type="checkbox" name="pdfShowPictures" value="1" /><br />';
-								$content .= '<label for="pdfShowInfo">Infotext drucken?</label> <input type="checkbox" name="pdfShowPictures" value="1" /><br />';
+								$content .= '<label for="pdfShowInfo">Infotext drucken?</label> <input type="checkbox" name="pdfShowInfo" value="1" /><br />';
+								$content .= '<label for="pdfShowBirthdays">Geburtstage drucken?</label> <input type="checkbox" name="pdfShowBirthdays" value="1" checked="checked" /><br />';
 								$content .= '<input type="submit" value="PDF jetzt erstellen" />';
 								$content .= $this->doc->spacer(5);
 								$content .= '<a href="index.php?SET[function]=1">Abbrechen</a>';
@@ -224,8 +226,9 @@ class  tx_rtvacationcare_module2 extends t3lib_SCbase {
 								if ($reallyMakePdfNow == 1) {					
 									if ($pdfShowPictures != 1) $pdfShowPictures = 0;
 									if ($pdfShowInfo != 1) $pdfShowInfo = 0;
+									if ($pdfShowBirthdays != 1) $pdfShowBirthdays = 0;
 									$pdfClass = t3lib_div::makeInstance('tx_rtvacationcare_pdfconf');
-									$makePdf = $pdfClass->formatAsPDF($vacation, $nameForPdf, $pdfShowPictures, $pdfShowInfo);
+									$makePdf = $pdfClass->formatAsPDF($vacation, $nameForPdf, $pdfShowPictures, $pdfShowInfo, $pdfShowBirthdays);
 								}
 							}
 							// listview

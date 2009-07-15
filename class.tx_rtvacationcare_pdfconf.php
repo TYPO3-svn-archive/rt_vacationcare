@@ -67,7 +67,7 @@ class tx_rtvacationcare_pdfconf   {
 	 * @return	string		Formatted data
 	 */
 
-	function formatAsPDF($vacation, $useName = '', $showPictures = 1, $pdfShowInfo = 1) {
+	function formatAsPDF($vacation, $useName = '', $showPictures = 1, $pdfShowInfo = 1, $pdfShowBirthdays = 1) {
 		$fileTitle = str_replace(' ', '_', utf8_decode($vacation['title'])).'.pdf';
 			// Check if the FPDF library is loaded (extension 'FDPF'). If not, return immediately.
 		if (!t3lib_extMgm::isLoaded('fpdf')) return;
@@ -307,13 +307,18 @@ class tx_rtvacationcare_pdfconf   {
  			$pdf->MultiCell(0,5, utf8_decode($vacation['info']));
  		}
  		
+ 		//----------------------------------------------------------------------------- //
+ 		// Birthday Infos
+ 		//
  		
+ 		if ($pdfShowBirthdays == 1) {
+ 			$pdf->birthdayInfos($attendees, $caretakers, $vacation);
+ 		}
  		
 		// Convert to PDF
 		$content = $pdf->Output($fileTitle,'D');
 		return $out;
 	}
-	
 	
 	function formatInvoice($recipient, $vacation) {
 		$fileTitle = 'Rechnung_'.str_replace(' ', '_', utf8_decode($vacation['title'])).'.pdf';
@@ -486,8 +491,6 @@ class myPDF extends PDF {
 		$this->SetDrawColor(0, 0, 0);
 		$this->SetLineWidth(0.1);
 		
-		$candleImage = PATH_site.'typo3conf/ext/rt_vacationcare/pi2/res/images/kerze.jpg';
-		
 		// get chief
 		$chiefRes = $GLOBALS['TYPO3_DB']->exec_SELECTquery(
 			'uid_foreign as uid',
@@ -523,7 +526,7 @@ class myPDF extends PDF {
 				$this->Cell(40,6,$theCity);
 				
 				$this->Cell(32,6,$at['phone']);
-				// birthday... no in new function... 14.07.09
+				// birthday... now in new function birthdayInfos()... 14.07.09
 								
 /*
 				$birthday = date('d.m', $at['birthday']);
@@ -549,9 +552,48 @@ class myPDF extends PDF {
 
 	}
 
-	function birthdayTable($birthdates) {
-		$bt = '';
-		return $bt;
+	function birthdayInfos($attendees, $caretakers, $vacation) {
+		$this->AddPage();
+		$this->SetFontSize('20');
+		$this->SetTextColor(0,200,0);
+		//Header
+		$this->Cell(400,10, 'Geburtstage auf der Freizeit:');
+		$posY = $this->GetY();
+		$posX = $this->GetX();
+		$candleImage = PATH_site.'typo3conf/ext/rt_vacationcare/pi2/res/images/kerze.jpg';
+		$this->Image($candleImage,$posX,$posY,5,0);
+		$this->Ln();
+		// birthday table attendees
+		$this->SetFontSize('9');
+		$this->SetTextColor(0,0,0);
+    	foreach($attendees as $data) {
+	        $birthday = date('d.m', $data['birthday']);
+	        $geb = explode(".",$birthday);  // Das Datum des Geburtstages wird aufgeteilt
+	        $duration = ($vacation['enddate']-$vacation['startdate'])/86400;
+	        for ($i = 0; $i <= $duration; $i++) {
+				$today = date('d.m',mktime(0,0,0,date('m', $vacation['startdate']),date('d', $vacation['startdate'])+$i, date('Y', $vacation['startdate'])));
+				if ($birthday == $today) {
+					$this->Cell(40,6,$data['first_name'].' am ');
+					$this->Cell(32,6,date('d.m.Y', $data['birthday']));
+					$this->Ln();
+				}
+			}
+    	}
+    	// caretaker birthdays
+    	foreach($caretakers as $data) {
+	        $birthday = date('d.m', $data['birthday']);
+	        $geb = explode(".",$birthday);  // Das Datum des Geburtstages wird aufgeteilt
+	        $duration = ($vacation['enddate']-$vacation['startdate'])/86400;
+	        for ($i = 0; $i <= $duration; $i++) {
+				$today = date('d.m',mktime(0,0,0,date('m', $vacation['startdate']),date('d', $vacation['startdate'])+$i, date('Y', $vacation['startdate'])));
+				if ($birthday == $today) {
+					$this->Cell(40,6,$data['first_name'].' am ');
+					$this->Cell(32,6,date('d.m.Y', $data['birthday']));
+					$this->Ln();
+				}
+			}
+    	}
+		return $out;
 	}
 }
 
