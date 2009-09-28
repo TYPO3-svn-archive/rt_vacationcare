@@ -366,13 +366,13 @@ class tx_rtvacationcare_pdfconf   {
 	    $pdf->Cell(120,10,$theDate,0,'','R');
 	    
 	    // name
-	    $pdf->SetFont('Arial','',20);
+	    $pdf->SetFont('Arial','',16);
 	    $pdf->Ln(30);
 	    $pdf->Cell(20);
 	    $pdf->Cell(0,5, utf8_decode($toAddress['first_name'].' '.$toAddress['last_name']));
 	    
 	    // from to date
-	    $pdf->SetFont('Arial','',10);
+	    $pdf->SetFont('Arial','',12);
 	    $pdf->Ln(20);
 	    $pdf->Cell(25);
 	    $theTime = date('d.m.Y', $vacation['startdate']).' - '.date('d.m.Y', $vacation['enddate']);
@@ -381,11 +381,11 @@ class tx_rtvacationcare_pdfconf   {
 	    // price 1
 	    $pdf->SetFont('Arial','',13);
 	    $pdf->Ln(38);
-	    $pdf->Cell(100);
-	    $pdf->Cell(30,5, utf8_decode($vacation['price'].',- EUR'));
+	    $pdf->Cell(150);
+	    $pdf->Cell(90,5, utf8_decode($vacation['price'].',- EUR'));
 	    // price sum
 	    $pdf->Ln(20);
-	    $pdf->Cell(100);
+	    $pdf->Cell(150);
 	    $pdf->Cell(30,5, utf8_decode($vacation['price'].',- EUR'));
 		// Convert to PDF
 		$content = $pdf->Output($fileTitle,'D');
