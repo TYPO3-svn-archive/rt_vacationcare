@@ -38,12 +38,6 @@ require_once(PATH_t3lib.'class.t3lib_befunc.php');
 require_once(PATH_t3lib.'class.t3lib_cs.php');
 */
 
-/*
-if (t3lib_extMgm::isLoaded('fpdf'))	{
-	require(t3lib_extMgm::extPath('fpdf').'class.tx_fpdf.php');
-}
-*/
-
 	// Give the script max. 10 minutes to run (has no effect if PHP is run in safe_mode)
 set_time_limit(600);
 
@@ -316,7 +310,8 @@ class tx_rtvacationcare_pdfconf   {
  		}
  		
 		// Convert to PDF
-		$content = $pdf->Output($fileTitle,'D');
+		$content = $pdf->Output($fileTitle,'I');
+		# nxs: I statt D für Download verwendet...
 		return $out;
 	}
 	
