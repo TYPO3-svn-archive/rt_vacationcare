@@ -9,6 +9,6 @@ $MCONF['name']='txrtvacationcareM1_txrtvacationcareM4';
 $MCONF['access']='user,group';
 $MCONF['script']='index.php';
 
-$MLANG['default']['tabs_images']['tab'] = 'moduleicon.gif';
+$MLANG['default']['tabs_images']['tab'] = 'moduleicon-caretaker.gif';
 $MLANG['default']['ll_ref']='LLL:EXT:rt_vacationcare/mod4/locallang_mod.xml';
 ?>

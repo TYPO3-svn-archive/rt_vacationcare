@@ -7,6 +7,6 @@ $MCONF['script'] = '_DISPATCH';
 	
 $MCONF['access'] = 'user,group';
 
-$MLANG['default']['tabs_images']['tab'] = 'moduleicon.gif';
+$MLANG['default']['tabs_images']['tab'] = 'start.gif';
 $MLANG['default']['ll_ref'] = 'LLL:EXT:rt_vacationcare/mod8/locallang_mod.xml';
 ?>
